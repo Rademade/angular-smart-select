@@ -1,0 +1,8 @@
+.selector-wrapper(ng-init='focus=false')
+    input.input-selector(ng-click = '$event.stopPropagation();$event.preventDefault();', ng-model='selectedItem', type='text', ng-focus="onFocus()")
+    div.select-list(ng-class="{'empty': properItems.length == 0}")
+        div.select-list-box
+            div.select-item(ng-show='properItems && focus ', ng-repeat='properItem in properItems', ng-click='setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();')
+                span.select-item-text(ng-bind-html='properItem[modelValue]')
+        div.select-btn-box(ng-show="focus && adding")
+            button(ng-click="addNewItem()") Add

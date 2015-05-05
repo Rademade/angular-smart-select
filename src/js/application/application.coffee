@@ -1,4 +1,4 @@
-app = angular.module('app', ['ngSuperSelect'])
+app = angular.module('app', ['ngSmartSelect'])
 app.controller 'mainCtrl', ['$scope', ($scope)->
 
   $scope.items = [

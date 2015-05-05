@@ -1,4 +1,4 @@
-angular.module('ngSelect',['ngSanitize']).directive 'selector',[ ->
+angular.module('ngSuperSelect',['ngSanitize']).directive 'selector',[ ->
   restrict : 'E'
   templateUrl : 'selector.html'
   scope :
@@ -11,7 +11,6 @@ angular.module('ngSelect',['ngSanitize']).directive 'selector',[ ->
   link: (scope) ->
 
     document.getElementsByTagName('body')[0].addEventListener 'click', ->
-        console.log '2'
         scope.focus = false
         cleanInput()
         scope.properItems = []
@@ -37,6 +36,7 @@ angular.module('ngSelect',['ngSanitize']).directive 'selector',[ ->
 
     scope.onFocus = ->
       scope.focus = true
+      scope.properItems = []
       setProperItems(scope.values, scope.properItems, scope.modelValue, scope.selectedItem, false, scope.matchClass)
 
     scope.setItem = (item)->
@@ -69,7 +69,7 @@ angular.module('ngSelect',['ngSanitize']).directive 'selector',[ ->
           highLightMatches(item, matchedValue, match, matchClass)
           to.push item
 
-    createItem = (itemOriginal, matchedValue, index )->
+    createItem = (itemOriginal, matchedValue, index)->
       item  = {}
       item[matchedValue] = itemOriginal[matchedValue]
       item.index = index

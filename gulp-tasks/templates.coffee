@@ -7,7 +7,7 @@ jade              = require 'gulp-jade'
 gulp.task "convertTemplates", [], ->
   gulp.src("src/views/templates/**/*.jade")
     .pipe jade({})
-    .pipe templateCache(module: "ngSelect")
+    .pipe templateCache(module: "ngSuperSelect")
     .pipe concat('templates.js')
     .pipe gulp.dest('temp')
 

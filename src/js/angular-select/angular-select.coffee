@@ -13,6 +13,7 @@ angular.module('ngSuperSelect',['ngSanitize']).directive 'selector',[ ->
     document.getElementsByTagName('body')[0].addEventListener 'click', ->
         scope.focus = false
         cleanInput()
+        scope.properItems = []
         scope.$apply()
 
 ####

@@ -25,7 +25,7 @@ angular.module('ngSmartSelect').factory 'ItemsPreparer', ['Highlighter',(Highlig
 
     addValue : (value)-> @values.push value
 
-    prepare : -> # for override
+    prepare : -> throw new OverrideException('prepare', 'ItemsPreparer')
 
     updateItems : ->
         while @properItems.length > 0

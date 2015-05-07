@@ -8,6 +8,8 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
     maxItems : '@'
     matchClass : '@'
     adding : '@'
+    modelChanged: '='
+
   link: (scope) ->
     document.getElementsByTagName('body')[0].addEventListener 'click', ->
         scope.focus = false
@@ -26,27 +28,26 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
       else
         newItem = scope.selectedItem
       scope.model = newItem
+      scope.modelChanged() if scope.modelChanged
       scope.values.push newItem
 
     scope.$watch 'selectedItem', ->
-#      if scope.itemSelected
-#        scope.itemSelected = false
-#        return
-      scope.ItemsPreparer.setMatch(scope.selectedItem)
+      scope.ItemsPreparer.setMatch(scope.selectedItem) if scope.ItemsPreparer
 
     scope.onFocus = ->
       scope.focus = true
       scope.ItemsPreparer.setMatch(scope.selectedItem)
+      scope.selectedItem = ''
 
 
     scope.setItem = (item)->
-#      scope.itemSelected = true
       if scope.modelValue
         scope.selectedItem = scope.values[item.index][scope.modelValue]
       else
         scope.selectedItem = scope.values[item.index]
 
       scope.model = scope.values[item.index]
+      scope.modelChanged() if scope.modelChanged
       scope.ItemsPreparer.setMatch(scope.selectedItem)
       scope.focus = false
 
@@ -66,7 +67,10 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
       scope.ItemsPreparer.setMatch(scope.selectedItem)
 #      scope.itemSelected = true
 
-    setModelValueFromOutside()
+    scope.$watch 'values', ->
+      if scope.values
+        scope.model = scope.values[0] unless scope.model
+        setModelValueFromOutside()
 
     checkItemExists = (itemValue, items, matchValue)->
       for item, index in items

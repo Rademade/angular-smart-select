@@ -5,7 +5,7 @@ angular.module('ngSmartSelect').factory 'ArrayItemsPreparer', [ 'ItemsPreparer',
     prepare : ->
       @updateItems()
       for value, index in @values
-        if value.indexOf(@match) > -1
+        if "#{value}".indexOf(@match) > -1
           @properItems.push @createItem(value, index)
 
   ArrayItemsPreparer

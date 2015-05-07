@@ -1,4 +1,4 @@
-angular.module('ngSuperSelect',['ngSanitize']).directive 'selector',[ ->
+angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectItemsPreparer', 'ArrayItemsPreparer', (ObjectItemsPreparer, ArrayItemsPreparer)->
   restrict : 'E'
   templateUrl : 'selector.html'
   scope :
@@ -9,11 +9,9 @@ angular.module('ngSuperSelect',['ngSanitize']).directive 'selector',[ ->
     matchClass : '@'
     adding : '@'
   link: (scope) ->
-
     document.getElementsByTagName('body')[0].addEventListener 'click', ->
         scope.focus = false
         cleanInput()
-        scope.properItems = []
         scope.$apply()
 
 ####
@@ -23,57 +21,52 @@ angular.module('ngSuperSelect',['ngSanitize']).directive 'selector',[ ->
     scope.addNewItem = ->
       return if checkItemExists(scope.selectedItem, scope.values, scope.modelValue)
       newItem = {}
-      newItem[scope.modelValue] = scope.selectedItem
+      if scope.modelValue
+        newItem[scope.modelValue] = scope.selectedItem
+      else
+        newItem = scope.selectedItem
       scope.model = newItem
       scope.values.push newItem
 
     scope.$watch 'selectedItem', ->
-      scope.properItems = []
-      if scope.itemSelected
-        scope.itemSelected = false
-        return
-      setProperItems(scope.values, scope.properItems, scope.modelValue, scope.selectedItem, false, scope.matchClass)
+#      if scope.itemSelected
+#        scope.itemSelected = false
+#        return
+      scope.ItemsPreparer.setMatch(scope.selectedItem)
 
     scope.onFocus = ->
       scope.focus = true
-      scope.properItems = []
-      setProperItems(scope.values, scope.properItems, scope.modelValue, scope.selectedItem, false, scope.matchClass)
+      scope.ItemsPreparer.setMatch(scope.selectedItem)
+
 
     scope.setItem = (item)->
-      scope.isNew = false
-      scope.itemSelected = true
-      scope.selectedItem = scope.values[item.index][scope.modelValue]
+#      scope.itemSelected = true
+      if scope.modelValue
+        scope.selectedItem = scope.values[item.index][scope.modelValue]
+      else
+        scope.selectedItem = scope.values[item.index]
+
       scope.model = scope.values[item.index]
-      scope.properItems = []
+      scope.ItemsPreparer.setMatch(scope.selectedItem)
       scope.focus = false
 
 ####
 # scope methods  >>>>
 ####
-
     setModelValueFromOutside = ->
-      scope.selectedItem = scope.model[scope.modelValue]
-      scope.itemSelected = true
+
+      if scope.modelValue
+        scope.selectedItem = scope.model[scope.modelValue]
+        scope.ItemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.modelValue)
+      else
+        scope.selectedItem = scope.model
+        scope.ItemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass)
+
+      scope.properItems = scope.ItemsPreparer.getProperItems()
+      scope.ItemsPreparer.setMatch(scope.selectedItem)
+#      scope.itemSelected = true
 
     setModelValueFromOutside()
-
-    setProperItems = (from, to, matchedValue,  match, count, matchClass)->
-      unless checkEmptyValue(from, to, match, count)
-        createItems(from, to, matchedValue,  match, count, matchClass)
-
-    createItems = (from, to, matchedValue,  match, count, matchClass)->
-      for itemOriginal, index in from
-        if itemOriginal[matchedValue].indexOf(match) > -1
-          item  = createItem(itemOriginal, matchedValue, index)
-          return if to.length == count
-          highLightMatches(item, matchedValue, match, matchClass)
-          to.push item
-
-    createItem = (itemOriginal, matchedValue, index)->
-      item  = {}
-      item[matchedValue] = itemOriginal[matchedValue]
-      item.index = index
-      item
 
     checkItemExists = (itemValue, items, matchValue)->
       for item, index in items
@@ -81,20 +74,8 @@ angular.module('ngSuperSelect',['ngSanitize']).directive 'selector',[ ->
       return false
 
     cleanInput = ->
-      scope.properItems = []
-      scope.selectedItem = scope.model[scope.modelValue]
-
-    highLightMatches = (item, matchedValue, match, matchClass)->
-      item[matchedValue] = item[matchedValue].replaceAll(match, "<span class='#{matchClass}'>#{match}</span>")
-
-
-    checkEmptyValue = (from, to, match, count)->
-      if match == ''
-        for item, index in from
-          return if to.length == count
-          item.index = index
-          to.push item
-        return true
+      if scope.modelValue
+         scope.selectedItem = scope.model[scope.modelValue]
+      else
+         scope.selectedItem = scope.model
 ]
-
-

@@ -32,7 +32,6 @@
               newItem = scope.selectedItem;
             }
             scope.model = newItem;
-            scope.$apply();
             if (scope.modelChanged) {
               scope.modelChanged();
             }
@@ -55,9 +54,7 @@
               scope.selectedItem = scope.values[item.index];
             }
             scope.model = scope.values[item.index];
-              scope.$apply();
-
-              if (scope.modelChanged) {
+            if (scope.modelChanged) {
               scope.modelChanged();
             }
             scope.ItemsPreparer.setMatch(scope.selectedItem);

@@ -10,7 +10,8 @@
           modelValue: '@',
           maxItems: '@',
           matchClass: '@',
-          adding: '@'
+          adding: '@',
+          modelChanged: '='
         },
         link: function(scope) {
           var checkItemExists, cleanInput, setModelValueFromOutside;
@@ -31,14 +32,21 @@
               newItem = scope.selectedItem;
             }
             scope.model = newItem;
+            scope.$apply();
+            if (scope.modelChanged) {
+              scope.modelChanged();
+            }
             return scope.values.push(newItem);
           };
           scope.$watch('selectedItem', function() {
-            return scope.ItemsPreparer.setMatch(scope.selectedItem);
+            if (scope.ItemsPreparer) {
+              return scope.ItemsPreparer.setMatch(scope.selectedItem);
+            }
           });
           scope.onFocus = function() {
             scope.focus = true;
-            return scope.ItemsPreparer.setMatch(scope.selectedItem);
+            scope.ItemsPreparer.setMatch(scope.selectedItem);
+            return scope.selectedItem = '';
           };
           scope.setItem = function(item) {
             if (scope.modelValue) {
@@ -47,6 +55,11 @@
               scope.selectedItem = scope.values[item.index];
             }
             scope.model = scope.values[item.index];
+              scope.$apply();
+
+              if (scope.modelChanged) {
+              scope.modelChanged();
+            }
             scope.ItemsPreparer.setMatch(scope.selectedItem);
             return scope.focus = false;
           };
@@ -61,7 +74,14 @@
             scope.properItems = scope.ItemsPreparer.getProperItems();
             return scope.ItemsPreparer.setMatch(scope.selectedItem);
           };
-          setModelValueFromOutside();
+          scope.$watch('values', function() {
+            if (scope.values) {
+              if (!scope.model) {
+                scope.model = scope.values[0];
+              }
+              return setModelValueFromOutside();
+            }
+          });
           checkItemExists = function(itemValue, items, matchValue) {
             var i, index, item, len;
             for (index = i = 0, len = items.length; i < len; index = ++i) {
@@ -107,7 +127,7 @@
           results = [];
           for (index = i = 0, len = ref.length; i < len; index = ++i) {
             value = ref[index];
-            if (value.indexOf(this.match) > -1) {
+            if (("" + value).indexOf(this.match) > -1) {
               results.push(this.properItems.push(this.createItem(value, index)));
             } else {
               results.push(void 0);
@@ -129,7 +149,7 @@
   angular.module('ngSmartSelect').service('Highlighter', function() {
     return {
       get: function(text, match, matchClass) {
-        return text.replaceAll(match, "<span class='" + matchClass + "'>" + match + "</span>");
+        return ("" + text).replaceAll("" + match, "<span class='" + matchClass + "'>" + match + "</span>");
       }
     };
   });
@@ -223,7 +243,7 @@
           results = [];
           for (index = i = 0, len = ref.length; i < len; index = ++i) {
             value = ref[index];
-            if (value[this.matchedField].indexOf(this.match) > -1 || this.matchedField === '') {
+            if (("" + value[this.matchedField]).indexOf(this.match) > -1 || this.matchedField === '') {
               results.push(this.properItems.push(this.createItem(value[this.matchedField], index)));
             } else {
               results.push(void 0);
@@ -243,7 +263,7 @@
 
 (function() {
   String.prototype.replaceAll = function(str1, str2, ignore) {
-    return this.replace(new RegExp(str1.replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, "\\$&"), (ignore ? "gi" : "g")), (typeof str2 === "string" ? str2.replace(/\$/g, "$$$$") : str2));
+    return this.replace(new RegExp(("" + str1).replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, "\\$&"), (ignore ? "gi" : "g")), (typeof ("" + str2) === "string" ? ("" + str2).replace(/\$/g, "$$$$") : "" + str2));
   };
 
 }).call(this);

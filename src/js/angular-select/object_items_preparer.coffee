@@ -9,7 +9,7 @@ angular.module('ngSmartSelect').factory 'ObjectItemsPreparer', [ 'ItemsPreparer'
     prepare : ()->
       @updateItems()
       for value, index in @values
-        if value[@matchedField].indexOf(@match) > -1 or @matchedField == ''
+        if "#{value[@matchedField]}".indexOf(@match) > -1 or @matchedField == ''
           @properItems.push @createItem(value[@matchedField], index)
 
   ObjectItemsPreparer

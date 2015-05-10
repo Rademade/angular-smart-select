@@ -9,9 +9,10 @@ angular.module('ngSmartSelect').factory 'ItemsPreparer', ['Highlighter',(Highlig
     matchClass : ''
     matchedField : 'name'
 
-    constructor : (values, matchClass)->
+    constructor : (values, matchClass, properItems)->
       @values = values
       @matchClass = matchClass
+      @properItems  = properItems
 
     setMatch : (match)->
       @match = match

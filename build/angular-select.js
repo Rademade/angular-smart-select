@@ -46,7 +46,9 @@
           scope.onFocus = function() {
             element[0].click();
             scope.focus = true;
-            scope.ItemsPreparer.setMatch(scope.selectedItem);
+            if (scope.ItemsPreparer) {
+              scope.ItemsPreparer.setMatch(scope.selectedItem);
+            }
             return scope.selectedItem = '';
           };
           scope.setItem = function(item) {

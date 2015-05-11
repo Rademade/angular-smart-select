@@ -38,7 +38,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
     scope.onFocus = ->
       element[0].click()
       scope.focus = true
-      scope.ItemsPreparer.setMatch(scope.selectedItem)
+      scope.ItemsPreparer.setMatch(scope.selectedItem) if scope.ItemsPreparer
       scope.selectedItem = ''
 
 

@@ -10,7 +10,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
     adding : '@'
     modelChanged: '='
 
-  link: (scope) ->
+  link: (scope, element) ->
     document.getElementsByTagName('body')[0].addEventListener 'click', ->
         scope.focus = false
         cleanInput()
@@ -36,7 +36,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
       scope.ItemsPreparer.setMatch(scope.selectedItem) if scope.ItemsPreparer
 
     scope.onFocus = ->
-      document.getElementsByTagName('body')[0].click()
+      element[0].click()
       scope.focus = true
       scope.ItemsPreparer.setMatch(scope.selectedItem)
       scope.selectedItem = ''

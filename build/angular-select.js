@@ -13,7 +13,7 @@
           adding: '@',
           modelChanged: '='
         },
-        link: function(scope) {
+        link: function(scope, element) {
           var checkItemExists, cleanInput, setModelValueFromOutside;
           document.getElementsByTagName('body')[0].addEventListener('click', function() {
             scope.focus = false;
@@ -44,7 +44,7 @@
             }
           });
           scope.onFocus = function() {
-            document.getElementsByTagName('body')[0].click();
+            element[0].click();
             scope.focus = true;
             scope.ItemsPreparer.setMatch(scope.selectedItem);
             return scope.selectedItem = '';

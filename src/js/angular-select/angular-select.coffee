@@ -35,6 +35,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
     scope.$watch 'selectedItem', ->
       scope.ItemsPreparer.setMatch(scope.selectedItem) if scope.ItemsPreparer
 
+    # Bind на фокус можно сделать прямо в директиве
     scope.onFocus = ->
       element[0].click()
       scope.focus = true
@@ -55,6 +56,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
 ####
 # scope methods  >>>>
 ####
+    # TODO Не очень удачное название метода. Не понятно сразу, что он далает
     setModelValueFromOutside = ->
       scope.properItems = []
       if scope.modelValue
@@ -71,6 +73,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
         scope.model = scope.values[0] unless scope.model
         setModelValueFromOutside()
 
+    # TODO Можно вынести эту проверку в Preparer?
     checkItemExists = (itemValue, items, matchValue)->
       for item, index in items
         return true if item[matchValue] == itemValue

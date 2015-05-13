@@ -13,12 +13,16 @@
           adding: '@',
           modelChanged: '='
         },
-        link: function(scope) {
+        link: function(scope, element) {
           var checkItemExists, cleanInput, setModelValueFromOutside;
           document.getElementsByTagName('body')[0].addEventListener('click', function() {
             scope.focus = false;
-            cleanInput();
-            return scope.$apply();
+            return cleanInput();
+          });
+          scope.$watch('model', function() {
+            if (scope.modelChanged) {
+              return scope.modelChanged();
+            }
           });
           scope.addNewItem = function() {
             var newItem;
@@ -32,9 +36,6 @@
               newItem = scope.selectedItem;
             }
             scope.model = newItem;
-            if (scope.modelChanged) {
-              scope.modelChanged();
-            }
             return scope.values.push(newItem);
           };
           scope.$watch('selectedItem', function() {
@@ -43,8 +44,11 @@
             }
           });
           scope.onFocus = function() {
+            element[0].click();
             scope.focus = true;
-            scope.ItemsPreparer.setMatch(scope.selectedItem);
+            if (scope.ItemsPreparer) {
+              scope.ItemsPreparer.setMatch(scope.selectedItem);
+            }
             return scope.selectedItem = '';
           };
           scope.setItem = function(item) {
@@ -54,21 +58,18 @@
               scope.selectedItem = scope.values[item.index];
             }
             scope.model = scope.values[item.index];
-            if (scope.modelChanged) {
-              scope.modelChanged();
-            }
             scope.ItemsPreparer.setMatch(scope.selectedItem);
             return scope.focus = false;
           };
           setModelValueFromOutside = function() {
+            scope.properItems = [];
             if (scope.modelValue) {
               scope.selectedItem = scope.model[scope.modelValue];
-              scope.ItemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.modelValue);
+              scope.ItemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.properItems, scope.modelValue);
             } else {
               scope.selectedItem = scope.model;
-              scope.ItemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass);
+              scope.ItemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass, scope.properItems);
             }
-            scope.properItems = scope.ItemsPreparer.getProperItems();
             return scope.ItemsPreparer.setMatch(scope.selectedItem);
           };
           scope.$watch('values', function() {
@@ -90,7 +91,7 @@
             return false;
           };
           return cleanInput = function() {
-            if (scope.modelValue) {
+            if (scope.modelValue && scope.model) {
               return scope.selectedItem = scope.model[scope.modelValue];
             } else {
               return scope.selectedItem = scope.model;
@@ -170,9 +171,10 @@
 
         ItemsPreparer.prototype.matchedField = 'name';
 
-        function ItemsPreparer(values, matchClass) {
+        function ItemsPreparer(values, matchClass, properItems) {
           this.values = values;
           this.matchClass = matchClass;
+          this.properItems = properItems;
         }
 
         ItemsPreparer.prototype.setMatch = function(match) {
@@ -228,8 +230,8 @@
       ObjectItemsPreparer = (function(superClass) {
         extend(ObjectItemsPreparer, superClass);
 
-        function ObjectItemsPreparer(values, matchClass, matchFiled) {
-          ObjectItemsPreparer.__super__.constructor.call(this, values, matchClass);
+        function ObjectItemsPreparer(values, matchClass, properItems, matchFiled) {
+          ObjectItemsPreparer.__super__.constructor.call(this, values, matchClass, properItems);
           this.matchedField = matchFiled;
         }
 

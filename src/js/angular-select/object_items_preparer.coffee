@@ -2,8 +2,8 @@ angular.module('ngSmartSelect').factory 'ObjectItemsPreparer', [ 'ItemsPreparer'
 
   class ObjectItemsPreparer extends ItemsPreparer
 
-    constructor : (values, matchClass, matchFiled)->
-      super(values, matchClass)
+    constructor : (values, matchClass, properItems, matchFiled)->
+      super(values, matchClass, properItems)
       @matchedField = matchFiled
 
     prepare : ()->

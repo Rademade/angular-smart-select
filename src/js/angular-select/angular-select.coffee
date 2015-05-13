@@ -10,15 +10,17 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
     adding : '@'
     modelChanged: '='
 
-  link: (scope) ->
+  link: (scope, element) ->
     document.getElementsByTagName('body')[0].addEventListener 'click', ->
         scope.focus = false
         cleanInput()
-        scope.$apply()
 
 ####
 # scope methods  <<<<
 ####
+
+    scope.$watch 'model', ->
+       scope.modelChanged()  if scope.modelChanged
 
     scope.addNewItem = ->
       return if checkItemExists(scope.selectedItem, scope.values, scope.modelValue)
@@ -28,15 +30,15 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
       else
         newItem = scope.selectedItem
       scope.model = newItem
-      scope.modelChanged() if scope.modelChanged
       scope.values.push newItem
 
     scope.$watch 'selectedItem', ->
       scope.ItemsPreparer.setMatch(scope.selectedItem) if scope.ItemsPreparer
 
     scope.onFocus = ->
+      element[0].click()
       scope.focus = true
-      scope.ItemsPreparer.setMatch(scope.selectedItem)
+      scope.ItemsPreparer.setMatch(scope.selectedItem) if scope.ItemsPreparer
       scope.selectedItem = ''
 
 
@@ -47,7 +49,6 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
         scope.selectedItem = scope.values[item.index]
 
       scope.model = scope.values[item.index]
-      scope.modelChanged() if scope.modelChanged
       scope.ItemsPreparer.setMatch(scope.selectedItem)
       scope.focus = false
 
@@ -55,17 +56,15 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
 # scope methods  >>>>
 ####
     setModelValueFromOutside = ->
-
+      scope.properItems = []
       if scope.modelValue
         scope.selectedItem = scope.model[scope.modelValue]
-        scope.ItemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.modelValue)
+        scope.ItemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.properItems, scope.modelValue)
       else
         scope.selectedItem = scope.model
-        scope.ItemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass)
+        scope.ItemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass, scope.properItems)
 
-      scope.properItems = scope.ItemsPreparer.getProperItems()
       scope.ItemsPreparer.setMatch(scope.selectedItem)
-#      scope.itemSelected = true
 
     scope.$watch 'values', ->
       if scope.values
@@ -78,7 +77,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
       return false
 
     cleanInput = ->
-      if scope.modelValue
+      if scope.modelValue and scope.model
          scope.selectedItem = scope.model[scope.modelValue]
       else
          scope.selectedItem = scope.model

@@ -2,28 +2,26 @@
   angular.module('ngSmartSelect', ['ngSanitize']).directive('selector', [
     'ObjectItemsPreparer', 'ArrayItemsPreparer', function(ObjectItemsPreparer, ArrayItemsPreparer) {
       return {
+        require: "?ngModel",
         restrict: 'E',
         templateUrl: 'selector.html',
         scope: {
           values: '=',
-          model: '=',
           modelValue: '@',
           maxItems: '@',
           matchClass: '@',
           adding: '@',
-          modelChanged: '='
+          placeholder: '@'
         },
-        link: function(scope, element) {
+        link: function(scope, element, attr, ngModelController) {
           var checkItemExists, cleanInput, setModelValueFromOutside;
           document.getElementsByTagName('body')[0].addEventListener('click', function() {
             scope.focus = false;
             return cleanInput();
           });
-          scope.$watch('model', function() {
-            if (scope.modelChanged) {
-              return scope.modelChanged();
-            }
-          });
+          ngModelController.$render = function() {
+            return scope.model = ngModelController.$modelValue;
+          };
           scope.addNewItem = function() {
             var newItem;
             if (checkItemExists(scope.selectedItem, scope.values, scope.modelValue)) {
@@ -36,6 +34,7 @@
               newItem = scope.selectedItem;
             }
             scope.model = newItem;
+            ngModelController.$setViewValue(scope.model);
             return scope.values.push(newItem);
           };
           scope.$watch('selectedItem', function() {
@@ -58,6 +57,7 @@
               scope.selectedItem = scope.values[item.index];
             }
             scope.model = scope.values[item.index];
+            ngModelController.$setViewValue(scope.model);
             scope.ItemsPreparer.setMatch(scope.selectedItem);
             return scope.focus = false;
           };
@@ -74,9 +74,6 @@
           };
           scope.$watch('values', function() {
             if (scope.values) {
-              if (!scope.model) {
-                scope.model = scope.values[0];
-              }
               return setModelValueFromOutside();
             }
           });
@@ -283,4 +280,4 @@
 
 }).call(this);
 
-angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<div ng-init=\"focus=false\" class=\"selector-wrapper\"><input ng-click=\"$event.stopPropagation();$event.preventDefault();\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" class=\"input-selector\"/><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\">Add</button></div></div></div>");}]);
+angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<div ng-init=\"focus=false\" class=\"selector-wrapper\"><input ng-click=\"$event.stopPropagation();$event.preventDefault();\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" placeholder=\"{{placeholder}}\" class=\"input-selector\"/><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\">Add</button></div></div></div>");}]);

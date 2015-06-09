@@ -1,26 +1,27 @@
 angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectItemsPreparer', 'ArrayItemsPreparer', (ObjectItemsPreparer, ArrayItemsPreparer)->
+  require: "?ngModel"
   restrict : 'E'
   templateUrl : 'selector.html'
   scope :
     values : '='
-    model : '='
     modelValue : '@'
     maxItems : '@'
     matchClass : '@'
     adding : '@'
-    modelChanged: '='
+    placeholder : '@'
 
-  link: (scope, element) ->
+
+  link: (scope, element, attr, ngModelController ) ->
     document.getElementsByTagName('body')[0].addEventListener 'click', ->
         scope.focus = false
         cleanInput()
 
+    ngModelController.$render = ->
+       scope.model = ngModelController.$modelValue
+
 ####
 # scope methods  <<<<
 ####
-
-    scope.$watch 'model', ->
-       scope.modelChanged()  if scope.modelChanged
 
     scope.addNewItem = ->
       return if checkItemExists(scope.selectedItem, scope.values, scope.modelValue)
@@ -30,6 +31,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
       else
         newItem = scope.selectedItem
       scope.model = newItem
+      ngModelController.$setViewValue(scope.model)
       scope.values.push newItem
 
     scope.$watch 'selectedItem', ->
@@ -49,6 +51,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
         scope.selectedItem = scope.values[item.index]
 
       scope.model = scope.values[item.index]
+      ngModelController.$setViewValue(scope.model)
       scope.ItemsPreparer.setMatch(scope.selectedItem)
       scope.focus = false
 
@@ -58,17 +61,16 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
     setModelValueFromOutside = ->
       scope.properItems = []
       if scope.modelValue
-        scope.selectedItem = scope.model[scope.modelValue]
+        scope.selectedItem = scope.model[scope.modelValue] if scope.model
         scope.ItemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.properItems, scope.modelValue)
       else
-        scope.selectedItem = scope.model
+        scope.selectedItem = scope.model if scope.model
         scope.ItemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass, scope.properItems)
 
       scope.ItemsPreparer.setMatch(scope.selectedItem)
 
     scope.$watch 'values', ->
       if scope.values
-        scope.model = scope.values[0] unless scope.model
         setModelValueFromOutside()
 
     checkItemExists = (itemValue, items, matchValue)->

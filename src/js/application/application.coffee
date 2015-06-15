@@ -1,5 +1,5 @@
 app = angular.module('app', ['ngSmartSelect'])
-app.controller 'mainCtrl', ['$scope', '$rootScope', ($scope, $rootScope)->
+app.controller 'mainCtrl', ['$scope', ($scope) ->
 
   $scope.objectItems = [
     {name : '2001'},

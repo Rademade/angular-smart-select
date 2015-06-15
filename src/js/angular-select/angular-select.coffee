@@ -1,5 +1,5 @@
 angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectItemsPreparer', 'ArrayItemsPreparer', (ObjectItemsPreparer, ArrayItemsPreparer)->
-  require: "?ngModel"
+  require: '?ngModel'
   restrict : 'E'
   templateUrl : 'selector.html'
   scope :
@@ -11,7 +11,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
     placeholder : '@'
 
 
-  link: (scope, element, attr, ngModelController ) ->
+  link: (scope, element, attr, ngModelController) ->
     document.getElementsByTagName('body')[0].addEventListener 'click', ->
         scope.focus = false
         cleanInput()
@@ -44,7 +44,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
       scope.selectedItem = ''
 
 
-    scope.setItem = (item)->
+    scope.setItem = (item) ->
       if scope.modelValue
         scope.selectedItem = scope.values[item.index][scope.modelValue]
       else
@@ -73,7 +73,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
       if scope.values
         setModelValueFromOutside()
 
-    checkItemExists = (itemValue, items, matchValue)->
+    checkItemExists = (itemValue, items, matchValue) ->
       for item, index in items
         return true if item[matchValue] == itemValue
       return false

@@ -19,7 +19,6 @@ body
 
 .selector-wrapper
   position: relative
-  width: 200px
 
 .select-list
   position: absolute
@@ -62,3 +61,15 @@ body
   position: absolute
   top: 100%
   left: 0
+
+.input-hint
+  position: absolute
+  top: -20px
+  left: 0
+  font-size: 12px
+  pointer-events: none
+  color: #000
+
+.input-selector
+  &:focus + .input-hint
+    color: rgb(17, 144, 190)

@@ -2,7 +2,7 @@
   angular.module('ngSmartSelect', ['ngSanitize']).directive('selector', [
     'ObjectItemsPreparer', 'ArrayItemsPreparer', function(ObjectItemsPreparer, ArrayItemsPreparer) {
       return {
-        require: "?ngModel",
+        require: '?ngModel',
         restrict: 'E',
         templateUrl: 'selector.html',
         scope: {
@@ -284,4 +284,4 @@
 
 }).call(this);
 
-angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<div ng-init=\"focus=false\" class=\"selector-wrapper\"><input ng-click=\"$event.stopPropagation();$event.preventDefault();\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" placeholder=\"{{placeholder}}\" class=\"input-selector\"/><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\">Add</button></div></div></div>");}]);
+angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<div ng-init=\"focus=false\" class=\"selector-wrapper\"><input ng-click=\"$event.stopPropagation();$event.preventDefault();\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" placeholder=\"{{placeholder}}\" class=\"input-selector\"/><span class=\"input-hint\"></span><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\">Add</button></div></div></div>");}]);

@@ -1,5 +1,5 @@
 app = angular.module('app', ['ngSmartSelect'])
-app.controller 'mainCtrl', ['$scope', ($scope)->
+app.controller 'mainCtrl', ['$scope', ($scope) ->
 
   $scope.objectItems = [
     {name : '2001'},
@@ -31,8 +31,11 @@ app.controller 'mainCtrl', ['$scope', ($scope)->
   ]
 
 
-  $scope.arraySelectedItem = '1994'
-  $scope.objectSelectedItem = $scope.objectItems[1]
+  $scope.arraySelectedItem = undefined
+  $scope.objectSelectedItem = $scope.objectItems[0]
+
+  $scope.modelChanged = (item) ->
+    console.log item
 
   $scope.$watch 'selectedItem', ->
     console.log $scope.selectedItem

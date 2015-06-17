@@ -2,31 +2,29 @@
   angular.module('ngSmartSelect', ['ngSanitize']).directive('selector', [
     'ObjectItemsPreparer', 'ArrayItemsPreparer', function(ObjectItemsPreparer, ArrayItemsPreparer) {
       return {
+        require: '?ngModel',
         restrict: 'E',
         templateUrl: 'selector.html',
         scope: {
           values: '=',
-          model: '=',
           modelValue: '@',
           maxItems: '@',
           matchClass: '@',
           adding: '@',
-          modelChanged: '='
+          placeholder: '@'
         },
-        link: function(scope, element) {
-          var checkItemExists, cleanInput, setModelValueFromOutside;
+        link: function(scope, element, attr, ngModelController) {
+          var cleanInput, initItemsPreparer;
           document.getElementsByTagName('body')[0].addEventListener('click', function() {
             scope.focus = false;
             return cleanInput();
           });
-          scope.$watch('model', function() {
-            if (scope.modelChanged) {
-              return scope.modelChanged();
-            }
-          });
+          ngModelController.$render = function() {
+            return scope.model = ngModelController.$modelValue;
+          };
           scope.addNewItem = function() {
             var newItem;
-            if (checkItemExists(scope.selectedItem, scope.values, scope.modelValue)) {
+            if (scope.ItemsPreparer.checkItemExists(scope.selectedItem)) {
               return;
             }
             newItem = {};
@@ -36,6 +34,7 @@
               newItem = scope.selectedItem;
             }
             scope.model = newItem;
+            ngModelController.$setViewValue(scope.model);
             return scope.values.push(newItem);
           };
           scope.$watch('selectedItem', function() {
@@ -58,38 +57,30 @@
               scope.selectedItem = scope.values[item.index];
             }
             scope.model = scope.values[item.index];
+            ngModelController.$setViewValue(scope.model);
             scope.ItemsPreparer.setMatch(scope.selectedItem);
             return scope.focus = false;
           };
-          setModelValueFromOutside = function() {
+          initItemsPreparer = function() {
             scope.properItems = [];
             if (scope.modelValue) {
-              scope.selectedItem = scope.model[scope.modelValue];
+              if (scope.model) {
+                scope.selectedItem = scope.model[scope.modelValue];
+              }
               scope.ItemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.properItems, scope.modelValue);
             } else {
-              scope.selectedItem = scope.model;
+              if (scope.model) {
+                scope.selectedItem = scope.model;
+              }
               scope.ItemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass, scope.properItems);
             }
             return scope.ItemsPreparer.setMatch(scope.selectedItem);
           };
           scope.$watch('values', function() {
             if (scope.values) {
-              if (!scope.model) {
-                scope.model = scope.values[0];
-              }
-              return setModelValueFromOutside();
+              return initItemsPreparer();
             }
           });
-          checkItemExists = function(itemValue, items, matchValue) {
-            var i, index, item, len;
-            for (index = i = 0, len = items.length; i < len; index = ++i) {
-              item = items[index];
-              if (item[matchValue] === itemValue) {
-                return true;
-              }
-            }
-            return false;
-          };
           return cleanInput = function() {
             if (scope.modelValue && scope.model) {
               return scope.selectedItem = scope.model[scope.modelValue];
@@ -211,6 +202,18 @@
           return this.properItems;
         };
 
+        ItemsPreparer.prototype.checkItemExists = function(itemValue) {
+          var i, index, item, len, ref;
+          ref = this.items;
+          for (index = i = 0, len = ref.length; i < len; index = ++i) {
+            item = ref[index];
+            if (item[this.matchedField] === itemValue) {
+              return true;
+            }
+          }
+          return false;
+        };
+
         return ItemsPreparer;
 
       })();
@@ -283,4 +286,4 @@
 
 }).call(this);
 
-angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<div ng-init=\"focus=false\" class=\"selector-wrapper\"><input ng-click=\"$event.stopPropagation();$event.preventDefault();\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" class=\"input-selector\"/><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\">Add</button></div></div></div>");}]);
+angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<div ng-init=\"focus=false\" class=\"selector-wrapper\"><input ng-click=\"$event.stopPropagation();$event.preventDefault();\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" placeholder=\"{{placeholder}}\" class=\"input-selector\"/><span class=\"input-hint\"></span><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\">Add</button></div></div></div>");}]);

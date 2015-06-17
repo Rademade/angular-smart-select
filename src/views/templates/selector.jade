@@ -1,5 +1,6 @@
 .selector-wrapper(ng-init='focus=false')
-    input.input-selector(ng-click = '$event.stopPropagation();$event.preventDefault();', ng-model='selectedItem', type='text', ng-focus="onFocus()")
+    input.input-selector(ng-click = '$event.stopPropagation();$event.preventDefault();', ng-model='selectedItem', type='text', ng-focus="onFocus()" placeholder="{{placeholder}}")
+    span.input-hint
     div.select-list(ng-class="{'empty': !focus}")
         div.select-list-box
             div.select-item(ng-show='properItems && focus ', ng-repeat='properItem in properItems', ng-click='setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();')

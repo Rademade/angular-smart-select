@@ -13,18 +13,18 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
 
   link: (scope, element, attr, ngModelController) ->
     document.getElementsByTagName('body')[0].addEventListener 'click', ->
-        scope.focus = false
-        cleanInput()
+      scope.focus = false
+      cleanInput()
 
     ngModelController.$render = ->
-       scope.model = ngModelController.$modelValue
+      scope.model = ngModelController.$modelValue
 
-####
-# scope methods  <<<<
-####
+    ####
+    # scope methods  <<<<
+    ####
 
     scope.addNewItem = ->
-      return if checkItemExists(scope.selectedItem, scope.values, scope.modelValue)
+      return if scope.ItemsPreparer.checkItemExists(scope.selectedItem)
       newItem = {}
       if scope.modelValue
         newItem[scope.modelValue] = scope.selectedItem
@@ -37,6 +37,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
     scope.$watch 'selectedItem', ->
       scope.ItemsPreparer.setMatch(scope.selectedItem) if scope.ItemsPreparer
 
+    # Bind на фокус можно сделать прямо в директиве
     scope.onFocus = ->
       element[0].click()
       scope.focus = true
@@ -55,10 +56,10 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
       scope.ItemsPreparer.setMatch(scope.selectedItem)
       scope.focus = false
 
-####
-# scope methods  >>>>
-####
-    setModelValueFromOutside = ->
+    ####
+    # scope methods  >>>>
+    ####
+    initItemsPreparer = ->
       scope.properItems = []
       if scope.modelValue
         scope.selectedItem = scope.model[scope.modelValue] if scope.model
@@ -71,16 +72,11 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
 
     scope.$watch 'values', ->
       if scope.values
-        setModelValueFromOutside()
-
-    checkItemExists = (itemValue, items, matchValue) ->
-      for item, index in items
-        return true if item[matchValue] == itemValue
-      return false
+        initItemsPreparer()
 
     cleanInput = ->
       if scope.modelValue and scope.model
-         scope.selectedItem = scope.model[scope.modelValue]
+        scope.selectedItem = scope.model[scope.modelValue]
       else
-         scope.selectedItem = scope.model
+        scope.selectedItem = scope.model
 ]

@@ -29,10 +29,17 @@ angular.module('ngSmartSelect').factory 'ItemsPreparer', ['Highlighter',(Highlig
     prepare : -> throw new OverrideException('prepare', 'ItemsPreparer')
 
     updateItems : ->
-        while @properItems.length > 0
-          @properItems.pop()
+      while @properItems.length > 0
+        @properItems.pop()
 
     getProperItems : -> @properItems
+
+    checkItemExists : (itemValue)->
+      for item, index in @items
+        return true if item[@matchedField] == itemValue
+      return false
+
+
 
   ItemsPreparer
 ]

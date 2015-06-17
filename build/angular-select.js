@@ -14,7 +14,7 @@
           placeholder: '@'
         },
         link: function(scope, element, attr, ngModelController) {
-          var checkItemExists, cleanInput, setModelValueFromOutside;
+          var cleanInput, initItemsPreparer;
           document.getElementsByTagName('body')[0].addEventListener('click', function() {
             scope.focus = false;
             return cleanInput();
@@ -24,7 +24,7 @@
           };
           scope.addNewItem = function() {
             var newItem;
-            if (checkItemExists(scope.selectedItem, scope.values, scope.modelValue)) {
+            if (scope.ItemsPreparer.checkItemExists(scope.selectedItem)) {
               return;
             }
             newItem = {};
@@ -61,7 +61,7 @@
             scope.ItemsPreparer.setMatch(scope.selectedItem);
             return scope.focus = false;
           };
-          setModelValueFromOutside = function() {
+          initItemsPreparer = function() {
             scope.properItems = [];
             if (scope.modelValue) {
               if (scope.model) {
@@ -78,19 +78,9 @@
           };
           scope.$watch('values', function() {
             if (scope.values) {
-              return setModelValueFromOutside();
+              return initItemsPreparer();
             }
           });
-          checkItemExists = function(itemValue, items, matchValue) {
-            var i, index, item, len;
-            for (index = i = 0, len = items.length; i < len; index = ++i) {
-              item = items[index];
-              if (item[matchValue] === itemValue) {
-                return true;
-              }
-            }
-            return false;
-          };
           return cleanInput = function() {
             if (scope.modelValue && scope.model) {
               return scope.selectedItem = scope.model[scope.modelValue];
@@ -210,6 +200,18 @@
 
         ItemsPreparer.prototype.getProperItems = function() {
           return this.properItems;
+        };
+
+        ItemsPreparer.prototype.checkItemExists = function(itemValue) {
+          var i, index, item, len, ref;
+          ref = this.items;
+          for (index = i = 0, len = ref.length; i < len; index = ++i) {
+            item = ref[index];
+            if (item[this.matchedField] === itemValue) {
+              return true;
+            }
+          }
+          return false;
         };
 
         return ItemsPreparer;

@@ -9,6 +9,7 @@ angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectIte
     matchClass : '@'
     adding : '@'
     placeholder : '@'
+    label : '@'
 
 
   link: (scope, element, attr, ngModelController) ->

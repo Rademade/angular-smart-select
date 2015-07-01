@@ -1,5 +1,5 @@
-angular.module('ngSmartSelect',['ngSanitize']).directive 'selector',[ 'ObjectItemsPreparer', 'ArrayItemsPreparer', (ObjectItemsPreparer, ArrayItemsPreparer)->
-  require: '?ngModel'
+angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector', [ 'ObjectItemsPreparer', 'ArrayItemsPreparer', (ObjectItemsPreparer, ArrayItemsPreparer) ->
+  require : '?ngModel'
   restrict : 'E'
   templateUrl : 'selector.html'
   scope :

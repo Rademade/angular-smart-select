@@ -66,10 +66,18 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
           scope.properItems = []
           if scope.modelValue
             scope.selectedItem = scope.model[scope.modelValue] if scope.model
-            scope.ItemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.properItems, scope.modelValue)
+            scope.ItemsPreparer = new ObjectItemsPreparer(
+                                  scope.values,
+                                  scope.matchClass,
+                                  scope.properItems,
+                                  scope.modelValue
+                                )
           else
             scope.selectedItem = scope.model if scope.model
-            scope.ItemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass, scope.properItems)
+            scope.ItemsPreparer = new ArrayItemsPreparer(
+                                  scope.values,
+                                  scope.matchClass,
+                                  scope.properItems)
 
           scope.ItemsPreparer.setMatch(scope.selectedItem)
 

@@ -33,6 +33,10 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
         ####
         scope.$on '$destroy', -> body.unbind 'click', _onClickCallback
 
+        scope.handleClick = (event) ->
+          event.stopPropagation()
+          event.preventDefault()
+
         scope.addNewItem = ->
           return if scope.ItemsPreparer.checkItemExists(scope.selectedItem)
           newItem = {}

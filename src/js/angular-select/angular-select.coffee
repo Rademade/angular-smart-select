@@ -2,22 +2,28 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
   ['ObjectItemsPreparer', 'ArrayItemsPreparer',
     (ObjectItemsPreparer, ArrayItemsPreparer) ->
 
-      require : '?ngModel'
-      restrict : 'E'
-      templateUrl : 'selector.html'
-      scope :
-        values : '='
-        modelValue : '@'
-        maxItems : '@'
-        matchClass : '@'
-        adding : '@'
-        placeholder : '@'
-        label : '@'
+      require: '?ngModel'
+      restrict: 'E'
+      templateUrl: 'selector.html'
+      scope:
+        values: '='
+        modelValue: '@'
+        maxItems: '@'
+        matchClass: '@'
+        adding: '@'
+        placeholder: '@'
+        label: '@'
 
       link: (scope, element, attr, ngModelController) ->
-        document.getElementsByTagName('body')[0].addEventListener 'click', ->
+
+
+
+        _onClickCallback =  ->
           scope.focus = false
           cleanInput()
+
+        body = angular.element(document.getElementsByTagName('body')[0])
+        body.bind 'click', _onClickCallback
 
         ngModelController.$render = ->
           scope.model = ngModelController.$modelValue
@@ -25,6 +31,7 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
         ####
         # scope methods  <<<<
         ####
+        scope.$on '$destroy', -> body.unbind 'click', _onClickCallback
 
         scope.addNewItem = ->
           return if scope.ItemsPreparer.checkItemExists(scope.selectedItem)
@@ -66,18 +73,10 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
           scope.properItems = []
           if scope.modelValue
             scope.selectedItem = scope.model[scope.modelValue] if scope.model
-            scope.ItemsPreparer = new ObjectItemsPreparer(
-                                  scope.values,
-                                  scope.matchClass,
-                                  scope.properItems,
-                                  scope.modelValue
-                                )
+            scope.ItemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.properItems, scope.modelValue)
           else
             scope.selectedItem = scope.model if scope.model
-            scope.ItemsPreparer = new ArrayItemsPreparer(
-                                  scope.values,
-                                  scope.matchClass,
-                                  scope.properItems)
+            scope.ItemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass, scope.properItems)
 
           scope.ItemsPreparer.setMatch(scope.selectedItem)
 

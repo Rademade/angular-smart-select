@@ -15,14 +15,19 @@
           label: '@'
         },
         link: function(scope, element, attr, ngModelController) {
-          var cleanInput, initItemsPreparer;
-          document.getElementsByTagName('body')[0].addEventListener('click', function() {
+          var _onClickCallback, body, cleanInput, initItemsPreparer;
+          _onClickCallback = function() {
             scope.focus = false;
             return cleanInput();
-          });
+          };
+          body = angular.element(document.getElementsByTagName('body')[0]);
+          body.bind('click', _onClickCallback);
           ngModelController.$render = function() {
             return scope.model = ngModelController.$modelValue;
           };
+          scope.$on('$destroy', function() {
+            return body.unbind('click', _onClickCallback);
+          });
           scope.addNewItem = function() {
             var newItem;
             if (scope.ItemsPreparer.checkItemExists(scope.selectedItem)) {

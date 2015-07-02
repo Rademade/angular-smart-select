@@ -6,4 +6,4 @@
             div.select-item(ng-show='properItems && focus ', ng-repeat='properItem in properItems', ng-click='setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();')
                 span.select-item-text(ng-bind-html="properItem[modelValue] || properItem['name']")
         div.select-btn-box(ng-show="focus && adding")
-            button(ng-click="addNewItem()") Add
+            button.select-btn(ng-click="addNewItem()") {{adding}}

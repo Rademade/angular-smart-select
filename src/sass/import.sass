@@ -73,3 +73,31 @@ body
 .input-selector
   &:focus + .input-hint
     color: rgb(17, 144, 190)
+
+.select-btn-box
+  position: absolute
+  top: 100%
+  width: 100%
+  left: -1px
+  background: #fff
+  border: 1px solid #49a5f4
+  border-top: none
+  border-radius: 0 0 2px 2px
+  box-sizing: content-box
+
+  .select-btn
+    font-size: 14px
+    color: #49a5f4
+    width: 100%
+    padding: 10px
+    background: none
+    text-decoration: underline
+    text-align: left
+    outline: none
+    border: none
+    box-sizing: border-box
+
+  &:hover
+    .select-btn
+      text-decoration: none
+

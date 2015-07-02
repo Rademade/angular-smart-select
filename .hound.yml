@@ -1,2 +1,6 @@
 coffeescript:
   config_file: .coffeescript-style.json
+javascript:
+  enabled: false
+
+

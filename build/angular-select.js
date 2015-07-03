@@ -145,13 +145,15 @@
 }).call(this);
 
 (function() {
-  angular.module('ngSmartSelect').service('Highlighter', function() {
-    return {
-      get: function(text, match, matchClass) {
-        return ("" + text).replaceAll("" + match, "<span class='" + matchClass + "'>" + match + "</span>");
-      }
-    };
-  });
+  angular.module('ngSmartSelect').service('Highlighter', [
+    function() {
+      return {
+        get: function(text, match, matchClass) {
+          return ("" + text).replaceAll("" + match, "<span class='" + matchClass + "'>" + match + "</span>");
+        }
+      };
+    }
+  ]);
 
 }).call(this);
 

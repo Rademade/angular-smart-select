@@ -1,6 +1,9 @@
 {
   "name": "angular-select",
-  "main": "/public/js/angular-select.js",
+  "main": [
+    "build/angular-select.js",
+    "build/stylesheets.css"
+  ],
   "version": "0.0.1",
   "description": "AngularJS select",
   "repository": {

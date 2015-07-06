@@ -239,7 +239,7 @@
         };
 
         ItemsPreparer.prototype.isMatch = function(value, match) {
-          return ("" + value).toLowerCase().indexOf(match) > -1 || ("" + value).toUpperCase().indexOf(match) > -1;
+          return ("" + value).toLowerCase().indexOf(("" + match).toLowerCase()) > -1;
         };
 
         return ItemsPreparer;

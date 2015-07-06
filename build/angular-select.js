@@ -34,13 +34,10 @@
             if (event.keyCode !== ENTER_KEY) {
               return false;
             }
-            if (!scope.properItems[0]) {
-              cleanInput();
-              return;
-            }
-            return scope.setItem(scope.properItems[0]);
+            return cleanInput();
           };
           scope.handleClick = function(event) {
+            element[0].children[0].children[0].focus();
             event.stopPropagation();
             return event.preventDefault();
           };
@@ -105,9 +102,12 @@
           });
           return cleanInput = function() {
             if (scope.modelValue && scope.model) {
-              return scope.selectedItem = scope.model[scope.modelValue];
+              scope.selectedItem = scope.model[scope.modelValue];
             } else {
-              return scope.selectedItem = scope.model;
+              scope.selectedItem = scope.model;
+            }
+            if (scope.properItems[0] && scope.properItems.length === 1) {
+              return scope.setItem(scope.properItems[0]);
             }
           };
         }
@@ -138,7 +138,7 @@
           results = [];
           for (index = i = 0, len = ref.length; i < len; index = ++i) {
             value = ref[index];
-            if (("" + value).indexOf(this.match) > -1) {
+            if (this.isMatch("" + value, this.match)) {
               results.push(this.properItems.push(this.createItem(value, index)));
             } else {
               results.push(void 0);
@@ -238,6 +238,10 @@
           return false;
         };
 
+        ItemsPreparer.prototype.isMatch = function(value, match) {
+          return ("" + value).toLowerCase().indexOf(match) > -1 || ("" + value).toUpperCase().indexOf(match) > -1;
+        };
+
         return ItemsPreparer;
 
       })();
@@ -269,7 +273,7 @@
           results = [];
           for (index = i = 0, len = ref.length; i < len; index = ++i) {
             value = ref[index];
-            if (("" + value[this.matchedField]).indexOf(this.match) > -1 || this.matchedField === '') {
+            if (this.isMatch("" + value[this.matchedField], this.match) || this.matchedField === '') {
               results.push(this.properItems.push(this.createItem(value[this.matchedField], index)));
             } else {
               results.push(void 0);
@@ -310,4 +314,4 @@
 
 }).call(this);
 
-angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<div ng-init=\"focus=false\" class=\"selector-wrapper\"><input ng-click=\"handleClick($event)\" ng-keypress=\"keyPressed($event)\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" placeholder=\"{{placeholder}}\" class=\"input-selector\"/><span class=\"input-hint\">{{label}}</span><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\" class=\"select-btn\">{{adding}}</button></div></div></div>");}]);
+angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<div ng-init=\"focus=false\" ng-class=\"{ \'is-current\': focus }\" class=\"selector-wrapper\"><input ng-click=\"handleClick($event)\" ng-keypress=\"keyPressed($event)\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" placeholder=\"{{placeholder}}\" class=\"input-selector\"/><i ng-click=\"handleClick($event)\" class=\"selector-arrow\"></i><span class=\"input-hint\">{{label}}</span><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\" class=\"select-btn\">{{adding}}</button></div></div></div>");}]);

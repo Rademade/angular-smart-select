@@ -34,13 +34,11 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
 
         scope.keyPressed = (event) ->
           return false if event.keyCode != ENTER_KEY
-          unless scope.properItems[0]
-            cleanInput()
-            return
-          scope.setItem(scope.properItems[0])
+          cleanInput()
 
 
         scope.handleClick = (event) ->
+          element[0].children[0].children[0].focus()
           event.stopPropagation()
           event.preventDefault()
 
@@ -100,4 +98,7 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
             scope.selectedItem = scope.model[scope.modelValue]
           else
             scope.selectedItem = scope.model
+
+          scope.setItem(scope.properItems[0]) if scope.properItems[0] and scope.properItems.length == 1
+
 ]

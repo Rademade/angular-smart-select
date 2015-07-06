@@ -39,6 +39,10 @@ angular.module('ngSmartSelect').factory 'ItemsPreparer', ['Highlighter',(Highlig
         return true if item[@matchedField] == itemValue
       return false
 
+    isMatch : (value, match) ->
+      "#{value}".toLowerCase().indexOf(match) > -1 || "#{value}".toUpperCase().indexOf(match) > -1
+
+
 
 
   ItemsPreparer

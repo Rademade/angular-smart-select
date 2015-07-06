@@ -1,6 +1,8 @@
 (function() {
   angular.module('ngSmartSelect', ['ngSanitize']).directive('selector', [
     'ObjectItemsPreparer', 'ArrayItemsPreparer', function(ObjectItemsPreparer, ArrayItemsPreparer) {
+      var ENTER_KEY;
+      ENTER_KEY = 13;
       return {
         require: '?ngModel',
         restrict: 'E',
@@ -28,6 +30,16 @@
           scope.$on('$destroy', function() {
             return body.unbind('click', _onClickCallback);
           });
+          scope.keyPressed = function(event) {
+            if (event.keyCode !== ENTER_KEY) {
+              return false;
+            }
+            if (!scope.properItems[0]) {
+              cleanInput();
+              return;
+            }
+            return scope.setItem(scope.properItems[0]);
+          };
           scope.handleClick = function(event) {
             event.stopPropagation();
             return event.preventDefault();
@@ -298,4 +310,4 @@
 
 }).call(this);
 
-angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<div ng-init=\"focus=false\" class=\"selector-wrapper\"><input ng-click=\"handleClick($event)\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" placeholder=\"{{placeholder}}\" class=\"input-selector\"/><span class=\"input-hint\">{{label}}</span><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\" class=\"select-btn\">{{adding}}</button></div></div></div>");}]);
+angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<div ng-init=\"focus=false\" class=\"selector-wrapper\"><input ng-click=\"handleClick($event)\" ng-keypress=\"keyPressed($event)\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" placeholder=\"{{placeholder}}\" class=\"input-selector\"/><span class=\"input-hint\">{{label}}</span><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\" class=\"select-btn\">{{adding}}</button></div></div></div>");}]);

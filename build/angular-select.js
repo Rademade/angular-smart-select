@@ -37,7 +37,7 @@
             return cleanInput();
           };
           scope.handleClick = function(event) {
-            element[0].children[0].children[0].focus();
+            element.find('input')[0].focus();
             event.stopPropagation();
             return event.preventDefault();
           };

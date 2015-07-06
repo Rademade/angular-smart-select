@@ -1,5 +1,5 @@
 .selector-wrapper(ng-init='focus=false')
-    input.input-selector(ng-click = 'handleClick($event)', ng-model='selectedItem', type='text', ng-focus="onFocus()" placeholder="{{placeholder}}")
+    input.input-selector(ng-click = 'handleClick($event)', ng-keypress="keyPressed($event)" ng-model='selectedItem', type='text', ng-focus="onFocus()" placeholder="{{placeholder}}")
     span.input-hint() {{label}}
     div.select-list(ng-class="{'empty': !focus}")
         div.select-list-box

@@ -1,6 +1,7 @@
 angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
   ['ObjectItemsPreparer', 'ArrayItemsPreparer',
     (ObjectItemsPreparer, ArrayItemsPreparer) ->
+      ENTER_KEY  = 13
 
       require: '?ngModel'
       restrict: 'E'
@@ -16,8 +17,6 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
 
       link: (scope, element, attr, ngModelController) ->
 
-
-
         _onClickCallback =  ->
           scope.focus = false
           cleanInput()
@@ -32,6 +31,14 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
         # scope methods  <<<<
         ####
         scope.$on '$destroy', -> body.unbind 'click', _onClickCallback
+
+        scope.keyPressed = (event) ->
+          return false if event.keyCode != ENTER_KEY
+          unless scope.properItems[0]
+            cleanInput()
+            return
+          scope.setItem(scope.properItems[0])
+
 
         scope.handleClick = (event) ->
           event.stopPropagation()

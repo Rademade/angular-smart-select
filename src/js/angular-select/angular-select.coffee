@@ -38,7 +38,7 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
 
 
         scope.handleClick = (event) ->
-          element[0].children[0].children[0].focus()
+          element.find('input')[0].focus()
           event.stopPropagation()
           event.preventDefault()
 

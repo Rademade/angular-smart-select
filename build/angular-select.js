@@ -138,7 +138,7 @@
           results = [];
           for (index = i = 0, len = ref.length; i < len; index = ++i) {
             value = ref[index];
-            if (this.isMatch("" + value, this.match)) {
+            if (this.isMatch(value, this.match)) {
               results.push(this.properItems.push(this.createItem(value, index)));
             } else {
               results.push(void 0);
@@ -273,7 +273,7 @@
           results = [];
           for (index = i = 0, len = ref.length; i < len; index = ++i) {
             value = ref[index];
-            if (this.isMatch("" + value[this.matchedField], this.match) || this.matchedField === '') {
+            if (this.isMatch(value[this.matchedField], this.match) || this.matchedField === '') {
               results.push(this.properItems.push(this.createItem(value[this.matchedField], index)));
             } else {
               results.push(void 0);

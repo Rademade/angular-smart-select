@@ -1,4 +1,4 @@
-.selector-wrapper(ng-init='focus=false' ng-class="{ 'is-current': focus }")
+label.selector-wrapper(ng-init='focus=false' ng-class="{ 'is-current': focus }")
     input.input-selector(ng-click = 'handleClick($event)', ng-keypress="keyPressed($event)" ng-model='selectedItem', type='text', ng-focus="onFocus()" placeholder="{{placeholder}}")
     i.selector-arrow(ng-click="handleClick($event)")
     span.input-hint() {{label}}

@@ -161,7 +161,7 @@
     function() {
       return {
         get: function(text, match, matchClass) {
-          return ("" + text).replaceAll("" + match, "<span class='" + matchClass + "'>" + match + "</span>");
+          return ("" + text).replaceAll("" + match, "" + matchClass);
         }
       };
     }
@@ -293,7 +293,7 @@
 
 (function() {
   String.prototype.replaceAll = function(str1, str2, ignore) {
-    return this.replace(new RegExp(("" + str1).replace(/([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, "\\$&"), (ignore ? "gi" : "g")), (typeof ("" + str2) === "string" ? ("" + str2).replace(/\$/g, "$$$$") : "" + str2));
+    return this.replace(new RegExp("([^(" + str1 + ")]*)(" + str1 + ")([^(" + str1 + ")]*)", "gi"), "$1<span class=\"" + str2 + "\">$2</span>$3");
   };
 
 }).call(this);

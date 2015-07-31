@@ -4,7 +4,7 @@ html
         <!-- endinject -->
     body(ng-app='app', ng-controller='mainCtrl')
         .box
-            selector(values="objectItems" ng-model="objectSelectedItem" label="Description" ng-change="modelChanged(objectSelectedItem)" model-value="name" match-class="highlight" adding="Add new item" placeholder="Enter value")
+            selector(values="objectItems" ng-model="objectSelectedItem" label="Description" ng-change="modelChanged(objectSelectedItem)" model-value="name" match-class="highlight" empty-result-message="no item" adding="Add new item" placeholder="Enter value")
         <!-- inject:js -->
         <!-- endinject -->
 

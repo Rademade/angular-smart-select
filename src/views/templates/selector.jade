@@ -3,7 +3,7 @@ label.selector-wrapper(ng-init='focus=false' ng-class="{ 'is-current': focus }")
     i.selector-arrow(ng-click="handleClick($event)")
     span.input-hint() {{label}}
     span.empty-result(ng-if="properItems.length == 0 && focus") {{emptyResultMessage}}
-    div.select-list(ng-class="{'empty': !focus}")
+    div.select-list(ng-class="{'empty': !focus}" ng-if="properItems.length > 0")
         div.select-list-box
             div.select-item(ng-show='properItems && focus ', ng-repeat='properItem in properItems', ng-click='setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();')
                 span.select-item-text(ng-bind-html="properItem[modelValue] || properItem['name']")

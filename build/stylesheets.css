@@ -163,3 +163,8 @@ body {
 .select-btn-box:hover .select-btn {
   text-decoration: none;
 }
+.select-btn-box .empty-result {
+  width: 100%;
+  height: 20px;
+  display: block;
+}

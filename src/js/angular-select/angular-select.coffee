@@ -14,6 +14,7 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
         adding: '@'
         placeholder: '@'
         label: '@'
+        emptyResultMessage: '@'
 
       link: (scope, element, attr, ngModelController) ->
 

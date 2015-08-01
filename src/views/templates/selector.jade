@@ -1,10 +1,10 @@
 label.selector-wrapper(ng-init='focus=false' ng-class="{ 'is-current': focus }")
-    input.input-selector(ng-click = 'handleClick($event)', ng-keypress="keyPressed($event)" ng-model='selectedItem', type='text', ng-focus="onFocus()" placeholder="{{placeholder}}")
+    input.input-selector(ng-click = 'handleClick($event)', ng-keypress="keyPressed($event)" ng-disabled="ngDisabled" ng-model='selectedItem', type='text', ng-focus="onFocus()" placeholder="{{placeholder}}")
     i.selector-arrow(ng-click="handleClick($event)")
     span.input-hint() {{label}}
     span.empty-result(ng-if="properItems.length == 0 && focus") {{emptyResultMessage}}
-    div.select-list(ng-class="{'empty': !focus}" ng-if="properItems.length > 0")
-        div.select-list-box
+    div.select-list(ng-class="{'empty': !focus}")
+        div.select-list-box(ng-if="properItems.length > 0")
             div.select-item(ng-show='properItems && focus ', ng-repeat='properItem in properItems', ng-click='setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();')
                 span.select-item-text(ng-bind-html="properItem[modelValue] || properItem['name']")
         div.select-btn-box(ng-show="focus && adding")

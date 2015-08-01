@@ -15,9 +15,9 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
         placeholder: '@'
         label: '@'
         emptyResultMessage: '@'
+        ngDisabled: '=?'
 
       link: (scope, element, attr, ngModelController) ->
-
         _onClickCallback =  ->
           scope.focus = false
           cleanInput()

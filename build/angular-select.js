@@ -32,6 +32,13 @@
           scope.$on('$destroy', function() {
             return body.unbind('click', _onClickCallback);
           });
+          scope.$watch('model', function() {
+            if (!scope.values) {
+              return;
+            }
+            scope.selectedItem = '';
+            return initItemsPreparer();
+          });
           scope.keyPressed = function(event) {
             if (event.keyCode !== ENTER_KEY) {
               return false;

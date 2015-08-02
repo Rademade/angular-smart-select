@@ -35,6 +35,7 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
 
         scope.$watch 'model', ->
           return unless scope.values
+          scope.selectedItem = ''
           initItemsPreparer()
 
         scope.keyPressed = (event) ->

@@ -36,6 +36,7 @@
             if (!scope.values) {
               return;
             }
+            scope.selectedItem = '';
             return initItemsPreparer();
           });
           scope.keyPressed = function(event) {

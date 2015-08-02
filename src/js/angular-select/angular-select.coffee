@@ -33,6 +33,10 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
         ####
         scope.$on '$destroy', -> body.unbind 'click', _onClickCallback
 
+        scope.$watch 'model', ->
+          return unless scope.values
+          initItemsPreparer()
+
         scope.keyPressed = (event) ->
           return false if event.keyCode != ENTER_KEY
           cleanInput()

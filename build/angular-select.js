@@ -16,7 +16,8 @@
           placeholder: '@',
           label: '@',
           emptyResultMessage: '@',
-          ngDisabled: '=?'
+          ngDisabled: '=?',
+          settings: '=?'
         },
         link: function(scope, element, attr, ngModelController) {
           var _onClickCallback, body, cleanInput, initItemsPreparer;
@@ -52,6 +53,9 @@
           };
           scope.addNewItem = function() {
             var newItem;
+            if (scope.settings && scope.selectedItem.length < scope.settings.minString) {
+              return;
+            }
             if (scope.ItemsPreparer.checkItemExists(scope.selectedItem)) {
               return;
             }

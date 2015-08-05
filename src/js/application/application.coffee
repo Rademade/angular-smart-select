@@ -30,6 +30,8 @@ app.controller 'mainCtrl', ['$scope', ($scope) ->
     '1990'
   ]
 
+  $scope.selectorSettings =
+    minString : 2
 
   $scope.arraySelectedItem = undefined
   $scope.objectSelectedItem = $scope.objectItems[0]

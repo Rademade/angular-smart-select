@@ -16,6 +16,7 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
         label: '@'
         emptyResultMessage: '@'
         ngDisabled: '=?'
+        settings: '=?'
 
       link: (scope, element, attr, ngModelController) ->
         _onClickCallback =  ->
@@ -49,6 +50,7 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
           event.preventDefault()
 
         scope.addNewItem = ->
+          return if scope.settings and scope.selectedItem.length < scope.settings.minString
           return if scope.ItemsPreparer.checkItemExists(scope.selectedItem)
           newItem = {}
           if scope.modelValue

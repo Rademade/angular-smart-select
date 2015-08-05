@@ -53,7 +53,7 @@
           };
           scope.addNewItem = function() {
             var newItem;
-            if (scope.settings && scope.selectedItem.length < scope.settings.minString) {
+            if (scope.settings && scope.selectedItem.length < scope.settings.minStringLength) {
               return;
             }
             if (scope.ItemsPreparer.checkItemExists(scope.selectedItem)) {

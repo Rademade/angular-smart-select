@@ -31,7 +31,7 @@ app.controller 'mainCtrl', ['$scope', ($scope) ->
   ]
 
   $scope.selectorSettings =
-    minString : 2
+    minStringLength : 2
 
   $scope.arraySelectedItem = undefined
   $scope.objectSelectedItem = $scope.objectItems[0]

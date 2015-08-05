@@ -50,7 +50,7 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
           event.preventDefault()
 
         scope.addNewItem = ->
-          return if scope.settings and scope.selectedItem.length < scope.settings.minString
+          return if scope.settings and scope.selectedItem.length < scope.settings.minStringLength
           return if scope.ItemsPreparer.checkItemExists(scope.selectedItem)
           newItem = {}
           if scope.modelValue

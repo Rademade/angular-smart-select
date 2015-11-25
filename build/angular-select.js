@@ -17,7 +17,8 @@
           label: '@',
           emptyResultMessage: '@',
           ngDisabled: '=?',
-          settings: '=?'
+          settings: '=?',
+          form: '=?'
         },
         link: function(scope, element, attr, ngModelController) {
           var _onClickCallback, body, cleanInput, initItemsPreparer;
@@ -83,13 +84,19 @@
             return scope.selectedItem = '';
           };
           scope.setItem = function(item) {
+            var itemNotChanged;
+            itemNotChanged = true;
             if (scope.modelValue) {
+              itemNotChanged = scope.selectedItem === scope.values[item.index][scope.modelValue];
               scope.selectedItem = scope.values[item.index][scope.modelValue];
             } else {
+              itemNotChanged = scope.selectedItem === scope.values[item.index];
               scope.selectedItem = scope.values[item.index];
             }
             scope.model = scope.values[item.index];
-            ngModelController.$setViewValue(scope.model);
+            if (!itemNotChanged) {
+              ngModelController.$setViewValue(scope.model);
+            }
             scope.ItemsPreparer.setMatch(scope.selectedItem);
             return scope.focus = false;
           };

@@ -17,6 +17,7 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
         emptyResultMessage: '@'
         ngDisabled: '=?'
         settings: '=?'
+        form: '=?'
 
       link: (scope, element, attr, ngModelController) ->
         _onClickCallback =  ->
@@ -73,13 +74,16 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
 
 
         scope.setItem = (item) ->
+          itemNotChanged = true
           if scope.modelValue
+            itemNotChanged = scope.selectedItem == scope.values[item.index][scope.modelValue]
             scope.selectedItem = scope.values[item.index][scope.modelValue]
           else
+            itemNotChanged = scope.selectedItem == scope.values[item.index]
             scope.selectedItem = scope.values[item.index]
 
           scope.model = scope.values[item.index]
-          ngModelController.$setViewValue(scope.model)
+          ngModelController.$setViewValue(scope.model) unless itemNotChanged
           scope.ItemsPreparer.setMatch(scope.selectedItem)
           scope.focus = false
 
@@ -102,11 +106,13 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
             initItemsPreparer()
 
         cleanInput = ->
+
           if scope.modelValue and scope.model
             scope.selectedItem = scope.model[scope.modelValue]
           else
             scope.selectedItem = scope.model
 
-          scope.setItem(scope.properItems[0]) if scope.properItems[0] and scope.properItems.length == 1
+          if scope.properItems[0] and scope.properItems.length == 1
+            scope.setItem(scope.properItems[0])
 
 ]

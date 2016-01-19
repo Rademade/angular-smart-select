@@ -142,7 +142,7 @@
             } else {
               scope.selectedItem = scope.model;
             }
-            if (scope.properItems[0] && scope.properItems.length === 1) {
+            if (scope.properItems && scope.properItems[0] && scope.properItems.length === 1) {
               return scope.setItem(scope.properItems[0]);
             }
           };

@@ -116,13 +116,12 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
             initItemsPreparer()
 
         cleanInput = () ->
-
           if scope.modelValue and scope.model
             scope.selectedItem = scope.model[scope.modelValue]
           else
             scope.selectedItem = scope.model
 
-          if scope.properItems[0] and scope.properItems.length == 1
+          if scope.properItems and scope.properItems[0] and scope.properItems.length == 1
             scope.setItem(scope.properItems[0])
 
 ]

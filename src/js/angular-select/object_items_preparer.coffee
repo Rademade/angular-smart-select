@@ -7,6 +7,7 @@ angular.module('ngSmartSelect').factory 'ObjectItemsPreparer', [ 'ItemsPreparer'
       @matchedField = matchFiled
 
     prepare : ()->
+      return unless @values
       @updateItems()
       for value, index in @values
         if @isMatch(value[@matchedField], @match) or @matchedField == ''

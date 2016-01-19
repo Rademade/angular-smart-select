@@ -18,11 +18,16 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
         ngDisabled: '=?'
         settings: '=?'
         form: '=?'
+        autoLoader: '=?'
 
       link: (scope, element, attr, ngModelController) ->
-        _onClickCallback =  ->
+        _onClickCallback =  () ->
           scope.focus = false
           cleanInput()
+
+        _loadWithAutoLoader = (selectedItem) ->
+          return unless scope.autoLoader
+          scope.autoLoader(selectedItem).then (values) -> scope.values = values
 
         body = angular.element(document.getElementsByTagName('body')[0])
         body.bind 'click', _onClickCallback
@@ -44,7 +49,6 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
           return false if event.keyCode != ENTER_KEY
           cleanInput()
 
-
         scope.handleClick = (event) ->
           element.find('input')[0].focus()
           event.stopPropagation()
@@ -52,7 +56,7 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
 
         scope.addNewItem = ->
           return if scope.settings and scope.selectedItem.length < scope.settings.minStringLength
-          return if scope.ItemsPreparer.checkItemExists(scope.selectedItem)
+          return if scope.itemsPreparer.checkItemExists(scope.selectedItem)
           newItem = {}
           if scope.modelValue
             newItem[scope.modelValue] = scope.selectedItem
@@ -62,14 +66,16 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
           ngModelController.$setViewValue(scope.model)
           scope.values.push newItem
 
-        scope.$watch 'selectedItem', ->
-          scope.ItemsPreparer.setMatch(scope.selectedItem) if scope.ItemsPreparer
+        scope.$watch 'selectedItem', () ->
+#          reset values on change input field
+          _loadWithAutoLoader(scope.selectedItem)
+          scope.itemsPreparer.setMatch(scope.selectedItem) if scope.itemsPreparer
 
         # Bind на фокус можно сделать прямо в директиве
         scope.onFocus = ->
           element[0].click()
           scope.focus = true
-          scope.ItemsPreparer.setMatch(scope.selectedItem) if scope.ItemsPreparer
+          scope.itemsPreparer.setMatch(scope.selectedItem) if scope.itemsPreparer
           scope.selectedItem = ''
 
 
@@ -84,35 +90,38 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
 
           scope.model = scope.values[item.index]
           ngModelController.$setViewValue(scope.model) unless itemNotChanged
-          scope.ItemsPreparer.setMatch(scope.selectedItem)
+          scope.itemsPreparer.setMatch(scope.selectedItem)
           scope.focus = false
 
         ####
         # scope methods  >>>>
         ####
-        initItemsPreparer = ->
+        initItemsPreparer = () ->
           scope.properItems = []
           if scope.modelValue
             scope.selectedItem = scope.model[scope.modelValue] if scope.model
-            scope.ItemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.properItems, scope.modelValue)
+            scope.itemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.properItems, scope.modelValue)
           else
             scope.selectedItem = scope.model if scope.model
-            scope.ItemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass, scope.properItems)
+            scope.itemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass, scope.properItems)
 
-          scope.ItemsPreparer.setMatch(scope.selectedItem)
+          scope.itemsPreparer.setMatch(scope.selectedItem)
 
-        scope.$watch 'values', ->
-          if scope.values
+        scope.$watch 'values', () ->
+          return unless scope.values
+          if scope.itemsPreparer
+            scope.itemsPreparer.resetValues(scope.values)
+            scope.itemsPreparer.setMatch(scope.selectedItem)
+          else
             initItemsPreparer()
 
-        cleanInput = ->
-
+        cleanInput = () ->
           if scope.modelValue and scope.model
             scope.selectedItem = scope.model[scope.modelValue]
           else
             scope.selectedItem = scope.model
 
-          if scope.properItems[0] and scope.properItems.length == 1
+          if scope.properItems and scope.properItems[0] and scope.properItems.length == 1
             scope.setItem(scope.properItems[0])
 
 ]

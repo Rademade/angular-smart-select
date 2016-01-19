@@ -1,4 +1,4 @@
-angular.module('ngSmartSelect').service 'Highlighter', [ ->
+angular.module('ngSmartSelect').service 'highlighter', [ ->
 
   get : (text, match, matchClass) -> "#{text}".replaceAll("#{match}", "#{matchClass}")
 

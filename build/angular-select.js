@@ -18,13 +18,22 @@
           emptyResultMessage: '@',
           ngDisabled: '=?',
           settings: '=?',
-          form: '=?'
+          form: '=?',
+          autoLoader: '=?'
         },
         link: function(scope, element, attr, ngModelController) {
-          var _onClickCallback, body, cleanInput, initItemsPreparer;
+          var _loadWithAutoLoader, _onClickCallback, body, cleanInput, initItemsPreparer;
           _onClickCallback = function() {
             scope.focus = false;
             return cleanInput();
+          };
+          _loadWithAutoLoader = function(selectedItem) {
+            if (!scope.autoLoader) {
+              return;
+            }
+            return scope.autoLoader(selectedItem).then(function(values) {
+              return scope.values = values;
+            });
           };
           body = angular.element(document.getElementsByTagName('body')[0]);
           body.bind('click', _onClickCallback);
@@ -57,7 +66,7 @@
             if (scope.settings && scope.selectedItem.length < scope.settings.minStringLength) {
               return;
             }
-            if (scope.ItemsPreparer.checkItemExists(scope.selectedItem)) {
+            if (scope.itemsPreparer.checkItemExists(scope.selectedItem)) {
               return;
             }
             newItem = {};
@@ -71,15 +80,16 @@
             return scope.values.push(newItem);
           };
           scope.$watch('selectedItem', function() {
-            if (scope.ItemsPreparer) {
-              return scope.ItemsPreparer.setMatch(scope.selectedItem);
+            _loadWithAutoLoader(scope.selectedItem);
+            if (scope.itemsPreparer) {
+              return scope.itemsPreparer.setMatch(scope.selectedItem);
             }
           });
           scope.onFocus = function() {
             element[0].click();
             scope.focus = true;
-            if (scope.ItemsPreparer) {
-              scope.ItemsPreparer.setMatch(scope.selectedItem);
+            if (scope.itemsPreparer) {
+              scope.itemsPreparer.setMatch(scope.selectedItem);
             }
             return scope.selectedItem = '';
           };
@@ -97,7 +107,7 @@
             if (!itemNotChanged) {
               ngModelController.$setViewValue(scope.model);
             }
-            scope.ItemsPreparer.setMatch(scope.selectedItem);
+            scope.itemsPreparer.setMatch(scope.selectedItem);
             return scope.focus = false;
           };
           initItemsPreparer = function() {
@@ -106,17 +116,23 @@
               if (scope.model) {
                 scope.selectedItem = scope.model[scope.modelValue];
               }
-              scope.ItemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.properItems, scope.modelValue);
+              scope.itemsPreparer = new ObjectItemsPreparer(scope.values, scope.matchClass, scope.properItems, scope.modelValue);
             } else {
               if (scope.model) {
                 scope.selectedItem = scope.model;
               }
-              scope.ItemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass, scope.properItems);
+              scope.itemsPreparer = new ArrayItemsPreparer(scope.values, scope.matchClass, scope.properItems);
             }
-            return scope.ItemsPreparer.setMatch(scope.selectedItem);
+            return scope.itemsPreparer.setMatch(scope.selectedItem);
           };
           scope.$watch('values', function() {
-            if (scope.values) {
+            if (!scope.values) {
+              return;
+            }
+            if (scope.itemsPreparer) {
+              scope.itemsPreparer.resetValues(scope.values);
+              return scope.itemsPreparer.setMatch(scope.selectedItem);
+            } else {
               return initItemsPreparer();
             }
           });
@@ -153,6 +169,9 @@
 
         ArrayItemsPreparer.prototype.prepare = function() {
           var i, index, len, ref, results, value;
+          if (!this.values) {
+            return;
+          }
           this.updateItems();
           ref = this.values;
           results = [];
@@ -177,7 +196,7 @@
 }).call(this);
 
 (function() {
-  angular.module('ngSmartSelect').service('Highlighter', [
+  angular.module('ngSmartSelect').service('highlighter', [
     function() {
       return {
         get: function(text, match, matchClass) {
@@ -191,7 +210,7 @@
 
 (function() {
   angular.module('ngSmartSelect').factory('ItemsPreparer', [
-    'Highlighter', function(Highlighter) {
+    'highlighter', function(highlighter) {
       var ItemsPreparer;
       ItemsPreparer = (function() {
         ItemsPreparer.prototype.values = [];
@@ -221,12 +240,16 @@
           var item;
           item = {};
           item.index = index;
-          item[this.matchedField] = Highlighter.get(value, this.match, this.matchClass);
+          item[this.matchedField] = highlighter.get(value, this.match, this.matchClass);
           return item;
         };
 
         ItemsPreparer.prototype.addValue = function(value) {
           return this.values.push(value);
+        };
+
+        ItemsPreparer.prototype.resetValues = function(values) {
+          return this.values = values;
         };
 
         ItemsPreparer.prototype.prepare = function() {
@@ -288,6 +311,9 @@
 
         ObjectItemsPreparer.prototype.prepare = function() {
           var i, index, len, ref, results, value;
+          if (!this.values) {
+            return;
+          }
           this.updateItems();
           ref = this.values;
           results = [];

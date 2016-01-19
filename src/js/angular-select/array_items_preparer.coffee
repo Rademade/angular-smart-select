@@ -2,7 +2,8 @@ angular.module('ngSmartSelect').factory 'ArrayItemsPreparer', [ 'ItemsPreparer',
 
   class ArrayItemsPreparer extends ItemsPreparer
 
-    prepare : ->
+    prepare : () ->
+      return unless @values
       @updateItems()
       for value, index in @values
         if @isMatch(value, @match)

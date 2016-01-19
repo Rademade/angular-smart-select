@@ -1,4 +1,4 @@
-angular.module('ngSmartSelect').factory 'ItemsPreparer', ['Highlighter',(Highlighter)->
+angular.module('ngSmartSelect').factory 'ItemsPreparer', ['highlighter',(highlighter)->
 
   class ItemsPreparer
 
@@ -21,18 +21,20 @@ angular.module('ngSmartSelect').factory 'ItemsPreparer', ['Highlighter',(Highlig
     createItem : (value, index)->
       item = {}
       item.index = index
-      item[@matchedField] = Highlighter.get(value, @match, @matchClass )
+      item[@matchedField] = highlighter.get(value, @match, @matchClass)
       item
 
     addValue : (value)-> @values.push value
 
-    prepare : -> throw new OverrideException('prepare', 'ItemsPreparer')
+    resetValues : (values) -> @values = values
 
-    updateItems : ->
+    prepare : () -> throw new OverrideException('prepare', 'ItemsPreparer')
+
+    updateItems : () ->
       while @properItems.length > 0
         @properItems.pop()
 
-    getProperItems : -> @properItems
+    getProperItems : () -> @properItems
 
     checkItemExists : (itemValue)->
       for item, index in @items

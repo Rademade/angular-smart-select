@@ -7,7 +7,7 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
       restrict: 'E'
       templateUrl: 'selector.html'
       scope:
-        values: '='
+        values: '=?'
         modelValue: '@'
         maxItems: '@'
         matchClass: '@'
@@ -49,7 +49,12 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
           return false if event.keyCode != ENTER_KEY
           cleanInput()
 
-        scope.handleClick = (event) ->
+        scope.handleArrowClick = (event) ->
+          return if scope.focus
+          scope.handleClick(event)
+
+        scope.handleClick = (event, focus) ->
+          scope.selectedItem = ''
           element.find('input')[0].focus()
           event.stopPropagation()
           event.preventDefault()

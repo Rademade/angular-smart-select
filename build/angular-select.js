@@ -1,6 +1,6 @@
 (function() {
   angular.module('ngSmartSelect', ['ngSanitize']).directive('selector', [
-    'ObjectItemsPreparer', 'ArrayItemsPreparer', function(ObjectItemsPreparer, ArrayItemsPreparer) {
+    'ObjectItemsPreparer', 'ArrayItemsPreparer', '$document', function(ObjectItemsPreparer, ArrayItemsPreparer, $document) {
       var ENTER_KEY;
       ENTER_KEY = 13;
       return {
@@ -22,8 +22,9 @@
           autoLoader: '=?'
         },
         link: function(scope, element, attr, ngModelController) {
-          var _loadWithAutoLoader, _onClickCallback, body, cleanInput, initItemsPreparer;
-          _onClickCallback = function() {
+          var _inputElement, _loadWithAutoLoader, cleanInput, initItemsPreparer;
+          _inputElement = element.find('input')[0];
+          scope.clearSelector = function() {
             scope.focus = false;
             return cleanInput();
           };
@@ -35,14 +36,9 @@
               return scope.values = values;
             });
           };
-          body = angular.element(document.getElementsByTagName('body')[0]);
-          body.bind('click', _onClickCallback);
           ngModelController.$render = function() {
             return scope.model = ngModelController.$modelValue;
           };
-          scope.$on('$destroy', function() {
-            return body.unbind('click', _onClickCallback);
-          });
           scope.$watch('model', function() {
             if (!scope.values) {
               return;
@@ -64,9 +60,7 @@
           };
           scope.handleClick = function(event, focus) {
             scope.selectedItem = '';
-            element.find('input')[0].focus();
-            event.stopPropagation();
-            return event.preventDefault();
+            return _inputElement.focus();
           };
           scope.addNewItem = function() {
             var newItem;
@@ -93,7 +87,6 @@
             }
           });
           scope.onFocus = function() {
-            element[0].click();
             scope.focus = true;
             if (scope.itemsPreparer) {
               scope.itemsPreparer.setMatch(scope.selectedItem);
@@ -345,6 +338,37 @@
 }).call(this);
 
 (function() {
+  angular.module('ngSmartSelect').directive('smartSelectonBodyClick', [
+    '$document', '$timeout', function($document, $timeout) {
+      return {
+        scope: {
+          smartSelectonBodyClick: '&',
+          isActive: '=?'
+        },
+        link: function($scope, $el, attrs) {
+          var callback;
+          callback = function(e) {
+            if (!$scope.isActive) {
+              return;
+            }
+            if (!$el[0].contains(e.target)) {
+              return $timeout(function() {
+                return $scope.smartSelectonBodyClick();
+              }, 0);
+            }
+          };
+          $document.bind('click', callback);
+          return $scope.$on('$destroy', function() {
+            return $document.unbind('click', callback);
+          });
+        }
+      };
+    }
+  ]);
+
+}).call(this);
+
+(function() {
   String.prototype.replaceAll = function(str1, str2, ignore) {
     str1 = str1.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
     return this.replace(new RegExp("([^(" + str1 + ")]*)(" + str1 + ")([^(" + str1 + ")]*)", "gi"), "$1<span class=\"" + str2 + "\">$2</span>$3");
@@ -368,4 +392,4 @@
 
 }).call(this);
 
-angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<label ng-init=\"focus=false\" ng-class=\"{ \'is-current\': focus }\" class=\"selector-wrapper\"><input ng-click=\"handleClick($event)\" ng-class=\"{ \'is-disabled\' : ngDisabled }\" ng-keypress=\"keyPressed($event)\" ng-disabled=\"ngDisabled\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" placeholder=\"{{placeholder}}\" class=\"input-selector\"/><i ng-click=\"handleArrowClick($event)\" class=\"selector-arrow\"></i><span class=\"input-hint\">{{label}}</span><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div ng-if=\"properItems.length &gt; 0\" class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><span ng-if=\"properItems.length == 0 &amp;&amp; focus\" class=\"empty-result\">{{emptyResultMessage}}</span><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\" class=\"select-btn\">{{adding}}</button></div></div></label>");}]);
+angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<label ng-init=\"focus=false\" ng-class=\"{ \'is-current\': focus }\" class=\"selector-wrapper\"><input ng-click=\"handleClick($event)\" smart-selecton-body-click=\"clearSelector()\" is-active=\"focus\" ng-class=\"{ \'is-disabled\' : ngDisabled }\" ng-keypress=\"keyPressed($event)\" ng-disabled=\"ngDisabled\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" placeholder=\"{{placeholder}}\" class=\"input-selector\"/><i ng-click=\"handleArrowClick($event)\" class=\"selector-arrow\"></i><span class=\"input-hint\">{{label}}</span><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div ng-if=\"properItems.length &gt; 0\" class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><span ng-if=\"properItems.length == 0 &amp;&amp; focus\" class=\"empty-result\">{{emptyResultMessage}}</span><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\" class=\"select-btn\">{{adding}}</button></div></div></label>");}]);

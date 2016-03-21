@@ -1,5 +1,5 @@
 label.selector-wrapper(ng-init='focus=false' ng-class="{ 'is-current': focus }")
-    input.input-selector(ng-click = 'handleClick($event)', ng-class="{ 'is-disabled' : ngDisabled }" ng-keypress="keyPressed($event)" ng-disabled="ngDisabled" ng-model='selectedItem', type='text', ng-focus="onFocus()" placeholder="{{placeholder}}")
+    input.input-selector(ng-click = 'handleClick($event)', smart-selecton-body-click="clearSelector()" is-active="focus" ng-class="{ 'is-disabled' : ngDisabled }" ng-keypress="keyPressed($event)" ng-disabled="ngDisabled" ng-model='selectedItem', type='text', ng-focus="onFocus()" placeholder="{{placeholder}}")
     i.selector-arrow(ng-click="handleArrowClick($event)")
     span.input-hint() {{label}}
     div.select-list(ng-class="{'empty': !focus}")

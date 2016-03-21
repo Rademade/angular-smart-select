@@ -1,6 +1,6 @@
 angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
-  ['ObjectItemsPreparer', 'ArrayItemsPreparer',
-    (ObjectItemsPreparer, ArrayItemsPreparer) ->
+  ['ObjectItemsPreparer', 'ArrayItemsPreparer', '$document',
+    (ObjectItemsPreparer, ArrayItemsPreparer, $document) ->
       ENTER_KEY  = 13
 
       require: '?ngModel'
@@ -21,7 +21,8 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
         autoLoader: '=?'
 
       link: (scope, element, attr, ngModelController) ->
-        _onClickCallback =  () ->
+        _inputElement = element.find('input')[0]
+        scope.clearSelector =  () ->
           scope.focus = false
           cleanInput()
 
@@ -29,8 +30,6 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
           return unless scope.autoLoader
           scope.autoLoader(selectedItem).then (values) -> scope.values = values
 
-        body = angular.element(document.getElementsByTagName('body')[0])
-        body.bind 'click', _onClickCallback
 
         ngModelController.$render = ->
           scope.model = ngModelController.$modelValue
@@ -38,7 +37,6 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
         ####
         # scope methods  <<<<
         ####
-        scope.$on '$destroy', -> body.unbind 'click', _onClickCallback
 
         scope.$watch 'model', ->
           return unless scope.values
@@ -55,9 +53,7 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
 
         scope.handleClick = (event, focus) ->
           scope.selectedItem = ''
-          element.find('input')[0].focus()
-          event.stopPropagation()
-          event.preventDefault()
+          _inputElement.focus()
 
         scope.addNewItem = ->
           return if scope.settings and scope.selectedItem.length < scope.settings.minStringLength
@@ -77,12 +73,10 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
           scope.itemsPreparer.setMatch(scope.selectedItem) if scope.itemsPreparer
 
         # Bind на фокус можно сделать прямо в директиве
-        scope.onFocus = ->
-          element[0].click()
+        scope.onFocus = () ->
           scope.focus = true
           scope.itemsPreparer.setMatch(scope.selectedItem) if scope.itemsPreparer
           scope.selectedItem = ''
-
 
         scope.setItem = (item) ->
           itemNotChanged = true

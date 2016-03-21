@@ -1,15 +1,15 @@
-angular.module('ngSmartSelect').directive 'smartSelectonBodyClick', ['$document', '$timeout', ($document, $timeout) ->
+angular.module('ngSmartSelect').directive 'smartSelectorBodyClick', ['$document', '$timeout', ($document, $timeout) ->
   scope :
-    smartSelectonBodyClick : '&'
+    smartSelectorBodyClick : '&'
     isActive : '=?'
 
   link : ($scope, $el, attrs) ->
 
     callback = (e) ->
       return unless $scope.isActive
-      unless $el[0].contains(e.target)
+      unless $el[0].contains(e.currentTarget.activeElement)
         $timeout(
-          () -> $scope.smartSelectonBodyClick(),
+          () -> $scope.smartSelectorBodyClick(),
         0)
 
     $document.bind 'click', callback

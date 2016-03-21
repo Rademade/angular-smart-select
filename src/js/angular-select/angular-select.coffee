@@ -30,7 +30,6 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
           return unless scope.autoLoader
           scope.autoLoader(selectedItem).then (values) -> scope.values = values
 
-
         ngModelController.$render = ->
           scope.model = ngModelController.$modelValue
 
@@ -48,7 +47,6 @@ angular.module('ngSmartSelect', ['ngSanitize']).directive 'selector',
           cleanInput()
 
         scope.handleArrowClick = (event) ->
-          return if scope.focus
           scope.handleClick(event)
 
         scope.handleClick = (event, focus) ->

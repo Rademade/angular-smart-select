@@ -24,7 +24,7 @@
         link: function(scope, element, attr, ngModelController) {
           var _inputElement, _loadWithAutoLoader, cleanInput, initItemsPreparer;
           _inputElement = element.find('input')[0];
-          scope.clearSelector = function() {
+          scope.clearSelector = function(event) {
             scope.focus = false;
             return cleanInput();
           };
@@ -53,9 +53,6 @@
             return cleanInput();
           };
           scope.handleArrowClick = function(event) {
-            if (scope.focus) {
-              return;
-            }
             return scope.handleClick(event);
           };
           scope.handleClick = function(event, focus) {
@@ -338,11 +335,11 @@
 }).call(this);
 
 (function() {
-  angular.module('ngSmartSelect').directive('smartSelectonBodyClick', [
+  angular.module('ngSmartSelect').directive('smartSelectorBodyClick', [
     '$document', '$timeout', function($document, $timeout) {
       return {
         scope: {
-          smartSelectonBodyClick: '&',
+          smartSelectorBodyClick: '&',
           isActive: '=?'
         },
         link: function($scope, $el, attrs) {
@@ -351,9 +348,9 @@
             if (!$scope.isActive) {
               return;
             }
-            if (!$el[0].contains(e.target)) {
+            if (!$el[0].contains(e.currentTarget.activeElement)) {
               return $timeout(function() {
-                return $scope.smartSelectonBodyClick();
+                return $scope.smartSelectorBodyClick();
               }, 0);
             }
           };
@@ -392,4 +389,4 @@
 
 }).call(this);
 
-angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<label ng-init=\"focus=false\" ng-class=\"{ \'is-current\': focus }\" class=\"selector-wrapper\"><input ng-click=\"handleClick($event)\" smart-selecton-body-click=\"clearSelector()\" is-active=\"focus\" ng-class=\"{ \'is-disabled\' : ngDisabled }\" ng-keypress=\"keyPressed($event)\" ng-disabled=\"ngDisabled\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" placeholder=\"{{placeholder}}\" class=\"input-selector\"/><i ng-click=\"handleArrowClick($event)\" class=\"selector-arrow\"></i><span class=\"input-hint\">{{label}}</span><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div ng-if=\"properItems.length &gt; 0\" class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><span ng-if=\"properItems.length == 0 &amp;&amp; focus\" class=\"empty-result\">{{emptyResultMessage}}</span><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\" class=\"select-btn\">{{adding}}</button></div></div></label>");}]);
+angular.module("ngSmartSelect").run(["$templateCache", function($templateCache) {$templateCache.put("selector.html","<label ng-init=\"focus=false\" ng-class=\"{ \'is-current\': focus }\" class=\"selector-wrapper\"><input ng-click=\"handleClick($event)\" smart-selector-body-click=\"clearSelector()\" is-active=\"focus\" ng-class=\"{ \'is-disabled\' : ngDisabled }\" ng-keypress=\"keyPressed($event)\" ng-disabled=\"ngDisabled\" ng-model=\"selectedItem\" type=\"text\" ng-focus=\"onFocus()\" placeholder=\"{{placeholder}}\" class=\"input-selector\"/><i ng-click=\"handleArrowClick($event)\" class=\"selector-arrow\"></i><span class=\"input-hint\">{{label}}</span><div ng-class=\"{\'empty\': !focus}\" class=\"select-list\"><div ng-if=\"properItems.length &gt; 0\" class=\"select-list-box\"><div ng-show=\"properItems &amp;&amp; focus \" ng-repeat=\"properItem in properItems\" ng-click=\"setItem(properItem);$event.stopImmediatePropagation();$event.preventDefault();\" class=\"select-item\"><span ng-bind-html=\"properItem[modelValue] || properItem[\'name\']\" class=\"select-item-text\"></span></div></div><span ng-if=\"properItems.length == 0 &amp;&amp; focus\" class=\"empty-result\">{{emptyResultMessage}}</span><div ng-show=\"focus &amp;&amp; adding\" class=\"select-btn-box\"><button ng-click=\"addNewItem()\" class=\"select-btn\">{{adding}}</button></div></div></label>");}]);
